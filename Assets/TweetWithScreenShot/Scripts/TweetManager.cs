@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Xml.Linq;
@@ -10,7 +9,7 @@ namespace TweetWithScreenShot
     public class TweetManager : MonoBehaviour
     {
 
-        private static TweetManager sinstance;
+        private static TweetManager _sinStance;
         public string[] hashTags;
 
         [SerializeField]
@@ -29,16 +28,16 @@ namespace TweetWithScreenShot
         {
             get
             {
-                if (sinstance == null)
+                if (_sinStance == null)
                 {
-                    sinstance = FindObjectOfType<TweetManager>();
-                    if (sinstance == null)
+                    _sinStance = FindObjectOfType<TweetManager>();
+                    if (_sinStance == null)
                     {
-                        var obj = new GameObject(typeof(TweetManager).Name);
-                        sinstance = obj.AddComponent<TweetManager>();
+                        var obj = new GameObject(nameof(TweetManager));
+                        _sinStance = obj.AddComponent<TweetManager>();
                     }
                 }
-                return sinstance;
+                return _sinStance;
             }
         }
 
@@ -48,7 +47,7 @@ namespace TweetWithScreenShot
             var tex = ScreenCapture.CaptureScreenshotAsTexture();
 
             // imgurへアップロード
-            string UploadedURL = "";
+            string uploadedURL = "";
 
             UnityWebRequest www;
 
@@ -73,23 +72,23 @@ namespace TweetWithScreenShot
                 //Twitterカードように拡張子を外す
                 string url = xDoc.Element("data").Element("link").Value;
                 url = url.Remove(url.Length - 4, 4);
-                UploadedURL = url;
+                uploadedURL = url;
             }
 
-            text += " " + UploadedURL;
+            text += " " + uploadedURL;
             string hashtags = "&hashtags=";
-            if (sinstance.hashTags.Length > 0)
+            if (_sinStance.hashTags.Length > 0)
             {
-                hashtags += string.Join (",", sinstance.hashTags);
+                hashtags += string.Join (",", _sinStance.hashTags);
             }
 
             // ツイッター投稿用URL
-            string TweetURL = "http://twitter.com/intent/tweet?text=" + text + hashtags;
+            var tweetURL = "http://twitter.com/intent/tweet?text=" + text + hashtags;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             Application.ExternalEval(string.Format("window.open('{0}','_blank')", TweetURL));
 #elif UNITY_EDITOR
-            System.Diagnostics.Process.Start (TweetURL);
+            System.Diagnostics.Process.Start (tweetURL);
 #else
             Application.OpenURL(TweetURL);
 #endif
