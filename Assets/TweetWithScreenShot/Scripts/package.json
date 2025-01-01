@@ -1,0 +1,18 @@
+{
+  "name": "jp.ayutaz.tweet-with-screenshot-webgl",
+  "displayName": "TweetWithScreenShotWebGL",
+  "version": "1.0.1",
+  "unity": "2022.3",
+  "description": "Tweet(Post) with screenshot for WebGL",
+  "keywords": [
+    "Twitter",
+    "X"
+  ],
+  "author": {
+    "name": "ayutaz",
+    "url": "https://github.com/ayutaz"
+  },
+  "changelogUrl": "https://github.com/ayutaz/CHANGELOG.md",
+  "license": "MIT",
+  "licensesUrl": "https://github.com/ayutaz/TweetWithScreenShotInWebGL/blob/master/LICENSE"
+}
