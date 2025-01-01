@@ -9,7 +9,6 @@ namespace TweetWithScreenShot
 {
     public class TweetManager : MonoBehaviour
     {
-
         private static TweetManager sinstance;
         public string[] hashTags;
 
@@ -44,55 +43,73 @@ namespace TweetWithScreenShot
 
         public static IEnumerator TweetWithScreenShot(string text)
         {
+            // フレームの終了まで待機（スクリーンショットを正しく取得するため）
             yield return new WaitForEndOfFrame();
+
+            // スクリーンショットをテクスチャとして取得
             var tex = ScreenCapture.CaptureScreenshotAsTexture();
 
-            // imgurへアップロード
-            string UploadedURL = "";
+            // 取得した画像をimgurにアップロード
+            string uploadedURL = "";
 
-            UnityWebRequest www;
+            // UnityWebRequestを使用してPOSTリクエストを送信
 
+            // 送信するフォームデータを作成
             WWWForm wwwForm = new WWWForm();
             wwwForm.AddField("image", Convert.ToBase64String(tex.EncodeToJPG()));
             wwwForm.AddField("type", "base64");
 
-            www = UnityWebRequest.Post("https://api.imgur.com/3/image.xml", wwwForm);
+            // imgurのAPIエンドポイントにPOSTリクエストを作成
+            var uploadRequest = UnityWebRequest.Post("https://api.imgur.com/3/image.xml", wwwForm);
 
-            www.SetRequestHeader("AUTHORIZATION", "Client-ID " + Instance.ClientID);
+            // 認証用のヘッダーを追加
+            uploadRequest.SetRequestHeader("AUTHORIZATION", "Client-ID " + Instance.ClientID);
 
-            yield return www.SendWebRequest();
+            // リクエストを送信して応答を待機
+            yield return uploadRequest.SendWebRequest();
 
-            if (www.isNetworkError)
+            // リクエストの結果をチェック
+            if (uploadRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(www.error);
+                Debug.LogError("アップロードに失敗しました: " + uploadRequest.error);
             }
             else
             {
-                Debug.Log("Data: " + www.downloadHandler.text);
-                XDocument xDoc = XDocument.Parse(www.downloadHandler.text);
-                //Twitterカードように拡張子を外す
+                Debug.Log("アップロード成功: " + uploadRequest.downloadHandler.text);
+                // 応答から画像のURLを取得
+                XDocument xDoc = XDocument.Parse(uploadRequest.downloadHandler.text);
+                // URLから拡張子を削除（Twitterカード対応のため）
                 string url = xDoc.Element("data").Element("link").Value;
                 url = url.Remove(url.Length - 4, 4);
-                UploadedURL = url;
+                uploadedURL = url;
             }
 
-            text += " " + UploadedURL;
-            string hashtags = "&hashtags=";
-            if (sinstance.hashTags.Length > 0)
+            // テキストに画像のURLを追加
+            text += " " + uploadedURL;
+
+            // ハッシュタグを生成
+            string hashtags = sinstance.hashTags.Length > 0 ? string.Join(",", sinstance.hashTags) : "";
+
+            // テキストとハッシュタグをURLエンコード
+            string escapedText = UnityWebRequest.EscapeURL(text);
+            string escapedHashtags = UnityWebRequest.EscapeURL(hashtags);
+
+            // ツイッター投稿用URLを作成
+            string tweetURL = "https://twitter.com/intent/tweet?text=" + escapedText;
+
+            if (!string.IsNullOrEmpty(escapedHashtags))
             {
-                hashtags += string.Join (",", sinstance.hashTags);
+                tweetURL += "&hashtags=" + escapedHashtags;
             }
 
-            // ツイッター投稿用URL
-            string TweetURL = "http://twitter.com/intent/tweet?text=" + text + hashtags;
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-            Application.ExternalEval(string.Format("window.open('{0}','_blank')", TweetURL));
-#elif UNITY_EDITOR
-            System.Diagnostics.Process.Start (TweetURL);
-#else
+            // ツイート画面を開く
+    #if UNITY_WEBGL && !UNITY_EDITOR
+            OpenWindow(TweetURL);
+    #elif UNITY_EDITOR
+            System.Diagnostics.Process.Start(tweetURL);
+    #else
             Application.OpenURL(TweetURL);
-#endif
+    #endif
         }
     }
 }
