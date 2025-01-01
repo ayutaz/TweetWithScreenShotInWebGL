@@ -3,7 +3,6 @@
 ## オリジナル版からの変更点
 * 改行の対応
 * www.isNetworkErrorをwww.resultに変更
-* unitypackageの自動生成
 * Package Managerに対応
 
 ## 使い方
