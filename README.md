@@ -12,8 +12,10 @@
 1. [Releases]()から最新のunitypackageをダウンロード
 2. Unityでプロジェクトを開き、ダウンロードしたunitypackageをインポート
 
-### Package Managerのインストール
-1. 
+## Package Managerからインストール
+1. Package Managerを開きます。
+2. `+` ボタンをクリックし、`Add package from git URL` を選択します。
+3. `https://github.com/ayutaz/TweetWithScreenShotInWebGL.git?path=/Assets/TweetWithScreenShot/Scripts`
 
 
 UnityのWebGLでサムネイル付き画像ツイートをするサンプルです
