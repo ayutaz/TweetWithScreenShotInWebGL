@@ -8,7 +8,7 @@
 ## 使い方
 
 ### unitypackageのインストール
-1. [Releases]()から最新のunitypackageをダウンロード
+1. [Releases](https://github.com/ayutaz/TweetWithScreenShotInWebGL/releases)から最新のunitypackageをダウンロード
 2. Unityでプロジェクトを開き、ダウンロードしたunitypackageをインポート
 
 ## Package Managerからインストール
