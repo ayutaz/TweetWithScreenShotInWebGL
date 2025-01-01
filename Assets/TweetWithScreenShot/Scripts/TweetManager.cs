@@ -103,13 +103,13 @@ namespace TweetWithScreenShot
             }
 
             // ツイート画面を開く
-    #if UNITY_WEBGL && !UNITY_EDITOR
-            OpenWindow(TweetURL);
-    #elif UNITY_EDITOR
-            System.Diagnostics.Process.Start(tweetURL);
-    #else
-            Application.OpenURL(TweetURL);
-    #endif
+#if UNITY_WEBGL && !UNITY_EDITOR
+            Application.ExternalEval(string.Format("window.open('{0}','_blank')", tweetURL));
+#elif UNITY_EDITOR
+            System.Diagnostics.Process.Start (tweetURL);
+#else
+            Application.OpenURL(tweetURL);
+#endif
         }
     }
 }

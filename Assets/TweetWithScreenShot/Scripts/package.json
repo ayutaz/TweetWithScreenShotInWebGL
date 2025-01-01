@@ -1,7 +1,7 @@
 {
   "name": "jp.ayutaz.tweet-with-screenshot-webgl",
   "displayName": "TweetWithScreenShotWebGL",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "unity": "2022.3",
   "description": "Tweet(Post) with screenshot for WebGL",
   "keywords": [
